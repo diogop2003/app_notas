@@ -1,9 +1,8 @@
 import tkinter as tk
 import sqlite3
 
-
 def criar_banco():
-    conexao = sqlite3.connect('notas.db')
+    conexao = sqlite3.connect('meu_banco.db')
     cursor = conexao.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS notas (
@@ -16,64 +15,59 @@ def criar_banco():
     conexao.close()
 
 def button_consulta_acao():
-    # Conectar ao banco de dados
     conexao = sqlite3.connect('meu_banco.db')
     cursor = conexao.cursor()
-    
-    # Selecionar dados da tabela
-    cursor.execute('SELECT * FROM usuarios')
+
+    cursor.execute('SELECT * FROM notas')
     resultado = cursor.fetchall()
 
     texto_resultado.delete(1.0, tk.END)
 
-    # Exibir os dados no console
-    for resultado in resultado:
-        texto_resultado.insert(tk.END, str(resultado) + '\n')
-    
+    for item in resultado:
+        texto_resultado.insert(tk.END, str(item) + '\n')
 
-
-    # Fechar a conexão
     conexao.close()
 
 def button_adicionar_acao():
-    # Conectar ao banco de dados
     conexao = sqlite3.connect('meu_banco.db')
     cursor = conexao.cursor()
-    
+
     cursor.execute('''
-                   INSERT INTO usuarios (nome, email)
-                   VALUES (?, ?)
-                   ''', ('teste', 'teste@teste')
-                   )
-    
+        INSERT INTO notas (nome, conteudo)
+        VALUES (?, ?)
+    ''', ('teste', 'teste@teste'))
+
     conexao.commit()
-    cursor.close()
-    
+    conexao.close()
+
+def button_pesquisar_acao():
+    print('Pesquisar ação ainda não implementada')
 
 # Criar a janela principal
 janela = tk.Tk()
 janela.title('HOME')
 janela.geometry('400x380')
-janela.config(bg= 'gray')
+janela.config(bg='gray')
+janela.resizable(False, False)
 
+# Caixa de texto para mostrar os resultados
+texto_resultado = tk.Text(janela, wrap=tk.WORD, bg='lightgrey', fg='black', height=15, width=50)
+texto_resultado.place(x=100, y=10, width=290, height=300)
 
-#caixa de texto
-texto_resultado = tk.Text(janela, wrap=tk.WORD, bg='lightgrey', fg='black', height=15, width=60)
-texto_resultado.place(x=100, y=10, width=290, height=360)
+# Botão consultar
+button_consulta = tk.Button(janela, text='CONSULTAR', command=button_consulta_acao, bg='lightgrey', fg='black', width=15, height=2)
+button_consulta.place(x=10, y=10, width=80, height=40)
 
-# Criar o botao consulta *
-button_consulta = tk.Button(janela, text='CONSULTAR', command=button_consulta_acao, bg='blue', fg='black', width=15, height=2)
-button_consulta.place(x= 10, y=10, width=80, height=30)
+# Botão adicionar
+button_adicionar = tk.Button(janela, text='ADICIONAR', command=button_adicionar_acao, bg='lightgrey', fg='black', width=15, height=2)
+button_adicionar.place(x=10, y=60, width=80, height=40)
 
+# Botão pesquisar
+button_pesquisar = tk.Button(janela, text='PESQUISAR', command=button_pesquisar_acao, bg='lightgrey', fg='black', width=15, height=2)
+button_pesquisar.place(x=10, y=110, width=80, height=40)
 
-# Criar o botão adicionar
-button_adicionar = tk.Button(janela, text='ADICIONAR', command=button_adicionar_acao, bg='blue', fg='black', width=15, height=2)
-button_adicionar.place(x= 10, y=40, width=80, height=30)
+# Caixa de texto para pesquisa
+texto_pesquisa = tk.Text(janela, bg='lightgrey', fg='black', height=2, width=20)
+texto_pesquisa.place(x=10, y=160, width=80, height=50)
 
-# Criar o botão 
-button_adicionar = tk.Button(janela, text='ADICIONAR', command=button_adicionar_acao, bg='blue', fg='black', width=15, height=2)
-button_adicionar.place(x= 10, y=40, width=80, height=30)
-
-
-# Iniciar o loop principal da interface gráfica
 janela.mainloop()
