@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import sqlite3
-from formulario_aluno import FormularioAluno
+from formulario_criar import FormularioAluno
+from formulario_editar import FormularioEditar
 
 def criar_banco():
     conexao = sqlite3.connect('meu_banco.db')
@@ -68,13 +70,43 @@ def button_pesquisar_acao():
     conexao.close()
 
 def button_editar_acao():
-    pass
+    try:
+        # Obtém o item selecionado
+        selecionado = tv.selection()[0]
+        valores = tv.item(selecionado)['values']
+        id_selecionado = valores[0]
 
- 
+        formulario = FormularioEditar(janela)
+        formulario.criar_formulario()
+        return id_selecionado
+
+    except IndexError:
+        messagebox.showinfo(title='ERRO', message='Selecione um elemento a ser deletado')
+    except Exception as e:
+        messagebox.showinfo(title='ERRO', message=f'Ocorreu um erro: {str(e)}')
+    finally:
+        conexao.close()
+
 def button_remover_acao():
-    pass
-    
+    try:
+        conexao = sqlite3.connect('meu_banco.db')
+        cursor = conexao.cursor()
 
+        selecionado = tv.selection()[0]
+        valores = tv.item(selecionado)['values']
+        id_selecionado = valores[0]  
+        tv.delete(selecionado)
+        cursor.execute("DELETE FROM notas WHERE id = ?", (id_selecionado,))
+        
+        conexao.commit()
+        conexao.close()
+
+    except IndexError:
+        messagebox.showinfo(title='ERRO', message='Selecione um elemento a ser deletado')
+    except Exception as e:
+        messagebox.showinfo(title='ERRO', message=f'Ocorreu um erro: {str(e)}')
+    finally:
+        conexao.close()
 
 # Criar a janela principal
 janela = tk.Tk()

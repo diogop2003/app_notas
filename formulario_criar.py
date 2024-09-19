@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import sqlite3
 
+
+
 class FormularioAluno:
     def __init__(self, root):
         self.root = root
@@ -53,7 +55,6 @@ class FormularioAluno:
     def button_salvar_acao(self):
         conexao = sqlite3.connect('meu_banco.db')
         cursor = conexao.cursor()
-
         termo_nome = self.caixa_nome.get().strip()
         termo_materia = self.caixa_materia.get("1.0", tk.END).strip()
         termo_av1 = self.caixa_av1.get().strip()
@@ -79,11 +80,14 @@ class FormularioAluno:
         conexao.commit()
         conexao.close()
         self.fechar_formulario()
+        
 
     def fechar_formulario(self):
         if self.janela_form:
             self.janela_form.destroy()
             self.janela_form = None
+            from index import button_atualizar_acao
+            button_atualizar_acao()
 
     def calc_media(self, av1, av2, av3):
         return (av1 + av2 + av3) / 3
