@@ -10,67 +10,46 @@ class FormularioAluno:
 
     def criar_formulario(self):
         self.janela_form = tk.Toplevel()
-        self.janela_form.title("ADICIONAR ALUNO")
-        self.janela_form.geometry("400x400")
+        self.janela_form.title("CRIAR ALUNO")
+        self.janela_form.geometry("250x310")
         self.janela_form.config(bg='gray')
         self.janela_form.resizable(False, False)
-
-        texto_titulo = tk.Label(self.janela_form, text="FORMULÁRIO", bg='gray', fg='white', font=('Arial', 16, 'bold'))
+        texto_titulo = tk.Label(self.janela_form, text="FORMULARIO ALUNO", bg='gray', fg='white', font=('Arial', 16, 'bold'))
         texto_titulo.pack(pady=10)
+        self.criar_campos()
 
-        texto_nome = tk.Label(self.janela_form, text="NOME:", bg='gray', fg='white', anchor='w')
-        texto_nome.place(x=10, y=50, width=100, height=25)
-
-        self.caixa_nome = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_nome.place(x=120, y=50, width=260, height=25)
-
-        texto_materia = tk.Label(self.janela_form, text="MATERIA:", bg='gray', fg='white', anchor='w')
-        texto_materia.place(x=10, y=90, width=100, height=25)
-
-        self.caixa_materia = tk.Text(self.janela_form, bg='lightgrey', fg='black', wrap='word')
-        self.caixa_materia.place(x=120, y=90, width=260, height=25)
-
-        texto_av1 = tk.Label(self.janela_form, text="AV1:", bg='gray', fg='white', anchor='w')
-        texto_av1.place(x=10, y=180, width=100, height=25)
-
-        self.caixa_av1 = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_av1.place(x=120, y=180, width=100, height=25)
-
-        texto_av2 = tk.Label(self.janela_form, text="AV2:", bg='gray', fg='white', anchor='w')
-        texto_av2.place(x=10, y=220, width=100, height=25)
-
-        self.caixa_av2 = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_av2.place(x=120, y=220, width=100, height=25)
-
-        texto_av3 = tk.Label(self.janela_form, text="AV3:", bg='gray', fg='white', anchor='w')
-        texto_av3.place(x=10, y=260, width=100, height=25)
-
-        self.caixa_av3 = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_av3.place(x=120, y=260, width=100, height=25)
-
-        # Botão salvar
         button_salvar = tk.Button(self.janela_form, text="Salvar", bg='gray', fg='white', command=self.button_salvar_acao)
-        button_salvar.place(x=150, y=310, width=100, height=30)
+        button_salvar.place(x=75, y=250, width=100, height=30)
+
+    def criar_campos(self):
+        labels = ["NOME:", "MATERIA:", "AV1:", "AV2:", "AV3:"]
+        self.campos = []
+        for i, label in enumerate(labels):
+            tk.Label(self.janela_form, text=label, bg='gray', fg='white', anchor='w').place(x=10, y=50 + i * 40, width=100, height=25)
+            campo = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
+            campo.place(x=120, y=50 + i * 40, width=100, height=25)
+            self.campos.append(campo)
+
 
     def button_salvar_acao(self):
         conexao = sqlite3.connect('meu_banco.db')
         cursor = conexao.cursor()
-        termo_nome = self.caixa_nome.get().strip()
-        termo_materia = self.caixa_materia.get("1.0", tk.END).strip()
-        termo_av1 = self.caixa_av1.get().strip()
-        termo_av2 = self.caixa_av2.get().strip()
-        termo_av3 = self.caixa_av3.get().strip()
+        self.campos[0] = self.caixa_nome.get().strip()
+        self.campos[1] = self.caixa_materia.get("1.0", tk.END).strip()
+        self.campos[2] = self.caixa_av1.get().strip()
+        self.campos[4] = self.caixa_av2.get().strip()
+        self.campos[5] = self.caixa_av3.get().strip()
 
         cursor.execute('''
             INSERT INTO notas (nome, materia, av1, av2, av3)
             VALUES (?, ?, ?, ?, ?)
-        ''', (termo_nome, termo_materia, termo_av1, termo_av2, termo_av3))
+        ''', (self.campos[0], self.campos[1], self.campos[2], self.campos[3], self.campos[4]))
 
         # Recupera o ID da linha inserida
         id_nota = cursor.lastrowid
 
-        # Calcula a média e atualiza a tabela
-        media = self.calc_media(float(termo_av1), float(termo_av2), float(termo_av3))
+        # Calcula a media e atualiza a tabela
+        media = self.calc_media(float(self.campos[2]), float(self.campos[3]), float(self.campos[4]))
         cursor.execute('''
             UPDATE notas
             SET media = ?

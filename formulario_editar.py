@@ -1,88 +1,78 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import messagebox
 import sqlite3
 
-
-
 class FormularioEditar:
-    def __init__(self, root):
+    
+    def __init__(self, root, id_selecionado):
         self.root = root
+        self.id_selecionado = id_selecionado  # Armazena o ID do aluno
 
     def criar_formulario(self):
         self.janela_form = tk.Toplevel()
         self.janela_form.title("EDITAR ALUNO")
-        self.janela_form.geometry("400x400")
+        self.janela_form.geometry("250x310")
         self.janela_form.config(bg='gray')
         self.janela_form.resizable(False, False)
-
-        texto_titulo = tk.Label(self.janela_form, text="EDITAR ALUNO", bg='gray', fg='white', font=('Arial', 16, 'bold'))
+        texto_titulo = tk.Label(self.janela_form, text="FORMULARIO ALUNO", bg='gray', fg='white', font=('Arial', 16, 'bold'))
         texto_titulo.pack(pady=10)
+        self.criar_campos()
 
-        texto_nome = tk.Label(self.janela_form, text="NOME:", bg='gray', fg='white', anchor='w')
-        texto_nome.place(x=10, y=50, width=100, height=25)
+        button_salvar = tk.Button(self.janela_form, text="Salvar", bg='gray', fg='white', command=self.button_editar_acao)
+        button_salvar.place(x=75, y=250, width=100, height=30)
 
-        self.caixa_nome = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_nome.place(x=120, y=50, width=260, height=25)
+    def criar_campos(self):
+        labels = ["NOME:", "MATERIA:", "AV1:", "AV2:", "AV3:"]
+        self.campos = []
+        for i, label in enumerate(labels):
+            tk.Label(self.janela_form, text=label, bg='gray', fg='white', anchor='w').place(x=10, y=50 + i * 40, width=100, height=25)
+            campo = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
+            campo.place(x=120, y=50 + i * 40, width=100, height=25)
+            self.campos.append(campo)
+        self.dados_anteriores() 
+    
+    def dados_anteriores(self):
+        try:
+            conexao = sqlite3.connect('meu_banco.db')
+            cursor = conexao.cursor()
+            cursor.execute('SELECT nome, materia, av1, av2, av3 FROM notas WHERE id = ?', (self.id_selecionado,))
+            resultado_fet = cursor.fetchone()
 
-        texto_materia = tk.Label(self.janela_form, text="MATERIA:", bg='gray', fg='white', anchor='w')
-        texto_materia.place(x=10, y=90, width=100, height=25)
+            if resultado_fet:
+                self.campos[0].insert(0, resultado_fet[0])      # Nome
+                self.campos[1].insert(0, resultado_fet[1])  # Matéria 
+                self.campos[2].insert(0, resultado_fet[2])      # AV1
+                self.campos[3].insert(0, resultado_fet[3])      # AV2
+                self.campos[4].insert(0, resultado_fet[4])      # AV3
 
-        self.caixa_materia = tk.Text(self.janela_form, bg='lightgrey', fg='black', wrap='word')
-        self.caixa_materia.place(x=120, y=90, width=260, height=25)
-
-        texto_av1 = tk.Label(self.janela_form, text="AV1:", bg='gray', fg='white', anchor='w')
-        texto_av1.place(x=10, y=180, width=100, height=25)
-
-        self.caixa_av1 = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_av1.place(x=120, y=180, width=100, height=25)
-
-        texto_av2 = tk.Label(self.janela_form, text="AV2:", bg='gray', fg='white', anchor='w')
-        texto_av2.place(x=10, y=220, width=100, height=25)
-
-        self.caixa_av2 = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_av2.place(x=120, y=220, width=100, height=25)
-
-        texto_av3 = tk.Label(self.janela_form, text="AV3:", bg='gray', fg='white', anchor='w')
-        texto_av3.place(x=10, y=260, width=100, height=25)
-
-        self.caixa_av3 = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-        self.caixa_av3.place(x=120, y=260, width=100, height=25)
-
-        # Botão editar
-        button_salvar = tk.Button(self.janela_form, text="Editar", bg='gray', fg='white', command=self.button_editar_acao)
-        button_salvar.place(x=150, y=310, width=100, height=30)
+        except sqlite3.Error as e:
+            print(f"Erro ao acessar o banco de dados: {e}")
+        finally:
+            if conexao:
+                conexao.close()
 
     def button_editar_acao(self):
         try:
             conexao = sqlite3.connect('meu_banco.db')
             cursor = conexao.cursor()
-            from index import button_editar_acao
-            id_aluno = button_editar_acao  # Obtém o ID do aluno a ser editado
 
-            termo_nome = self.caixa_nome.get().strip()
-            termo_materia = self.caixa_materia.get("1.0", tk.END).strip()
-            termo_av1 = self.caixa_av1.get().strip()
-            termo_av2 = self.caixa_av2.get().strip()
-            termo_av3 = self.caixa_av3.get().strip()
+            termo_nome = self.campos[0].get().strip()
+            termo_materia = self.campos[1].get("1.0", tk.END).strip()
+            termo_av1 = self.campos[2].get().strip()
+            termo_av2 = self.campos[3].get().strip()
+            termo_av3 = self.campos[4].get().strip()
 
-            # Validações
             if not termo_nome or not termo_materia or not termo_av1 or not termo_av2 or not termo_av3:
                 raise ValueError("Preencha todos os campos corretamente!")
-
-            # Atualiza o registro no banco de dados
             cursor.execute('''
                 UPDATE notas
                 SET nome = ?, materia = ?, av1 = ?, av2 = ?, av3 = ?
                 WHERE id = ?
-            ''', (termo_nome, termo_materia, termo_av1, termo_av2, termo_av3, id_aluno))
+            ''', (termo_nome, termo_materia, termo_av1, termo_av2, termo_av3, self.id_selecionado))
 
             # Calcula a média e atualiza a tabela
             media = self.calc_media(float(termo_av1), float(termo_av2), float(termo_av3))
-            cursor.execute('''
-                UPDATE notas
-                SET media = ?
-                WHERE id = ?
-            ''', (media, id_aluno))
+            cursor.execute('UPDATE notas SET media = ? WHERE id = ?', (media, self.id_selecionado))
 
             conexao.commit()
         except Exception as e:
@@ -95,6 +85,8 @@ class FormularioEditar:
         if self.janela_form:
             self.janela_form.destroy()
             self.janela_form = None
+            from index import button_atualizar_acao
+            button_atualizar_acao()
 
     def calc_media(self, av1, av2, av3):
         return (av1 + av2 + av3) / 3
