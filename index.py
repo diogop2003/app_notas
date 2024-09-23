@@ -19,7 +19,7 @@ class JanelaPrincipal:
     def criar_banco(self):
         '''
         Essa função cria o banco de dados caso ele não exista
-        
+
         '''
         conexao = sqlite3.connect('meu_banco.db')
         cursor = conexao.cursor()
@@ -40,16 +40,15 @@ class JanelaPrincipal:
     def formatar_media(self, media):
         '''
         Essa função formata a media dos alunos
-        
+
         '''
         return f"{media:.1f}"
 
     def button_atualizar_acao(self):
         '''
         Essa função é a ação do botão "ATUALIZAR", que atualiza as informações dos alunos no Banco de dados
-        
+
         '''
-        
         conexao = sqlite3.connect('meu_banco.db')
         cursor = conexao.cursor()
 
@@ -72,18 +71,18 @@ class JanelaPrincipal:
     def button_criar_acao(self):
         '''
         Essa função é a ação do botão "CRIAR", que chama a janela de criação do formulario do aluno 
-        
+
         '''
-        formulario = FormularioAluno(self.janela)
+        formulario = FormularioAluno(self.janela, self.button_atualizar_acao)
         formulario.criar_formulario()
 
     def button_pesquisar_acao(self):
         '''
         Essa função é a ação do botão "PESQUISAR", que mostra na TreevView o aluno de acordo 
         com o nome escrito no campo de entrada embaixo do botão
-        
+
         '''
-        
+
         conexao = sqlite3.connect('meu_banco.db')
         cursor = conexao.cursor()
 
@@ -108,9 +107,9 @@ class JanelaPrincipal:
     def button_remover_acao(self):
         '''
         Essa função é a ação do botão "REMOVER", que exclui o aluno selecionado
-        
+
         '''
-        
+
         try:
             conexao = sqlite3.connect('meu_banco.db')
             cursor = conexao.cursor()
@@ -135,7 +134,7 @@ class JanelaPrincipal:
     def id_selecionado(self):
         '''
         Essa função retorna o id do aluno selecionado na TreeView
-        
+
         '''
 
         try:
@@ -150,20 +149,22 @@ class JanelaPrincipal:
     def button_editar_acao(self):
         '''
         Essa função é a ação do botão "EDITAR", que chama a janela de edição do aluno selecionado
-        
+
         '''
 
         id_selecionado = self.id_selecionado()
         if id_selecionado is not None:
-            formulario = FormularioEditar(self.janela, id_selecionado)
-            formulario.criar_formulario()
+            formulario = FormularioEditar(
+                id_selecionado, self.button_atualizar_acao)
+
+        formulario.criar_formulario()
 
     def button_exportar_acao(self):
         '''
         Essa função gera o aquivo "meu_csv", que contem todos os dados do Banco de dados
-        
+
         '''
-        
+
         from pandas import DataFrame
         try:
             conexao = sqlite3.connect('meu_banco.db')
@@ -194,9 +195,9 @@ class JanelaPrincipal:
         '''
         Essa função ao dar double-click no aluno na Treeview, chama a função "info_aluno",
         que abre a janela de informações do aluno
-        
+
         '''
-        
+
         item = self.tv.selection()
         if item:
             self.info_aluno()
@@ -204,9 +205,9 @@ class JanelaPrincipal:
     def info_aluno(self):
         '''
         Essa função chama a janela de informações do aluno selecionado
-        
+
         '''
-        
+
         id_selecionado = self.id_selecionado()
         if id_selecionado is not None:
             informacoes = InformacoesAluno(self.janela, id_selecionado)
@@ -215,9 +216,9 @@ class JanelaPrincipal:
     def iniciar_interface(self):
         '''
         Essa função cria a janela principal
-        
+
         '''
-        
+
         # Criar a janela principal
         self.janela.title('APP ALUNOS')
         self.janela.geometry('700x500')
