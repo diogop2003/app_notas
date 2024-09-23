@@ -18,16 +18,14 @@ class FormularioAluno:
         texto_titulo.pack(pady=10)
         self.criar_campos()
 
-        button_salvar = tk.Button(self.janela_form, text="Salvar", bg='gray', fg='white', command=self.button_salvar_acao)
-        button_salvar.place(x=75, y=250, width=100, height=30)
+        button_salvar = tk.Button(self.janela_form, text="Salvar", bg='gray', fg='white', command=self.button_salvar_acao).place(x=75, y=250, width=100, height=30)
 
     def criar_campos(self):
         labels = ["NOME:", "MATERIA:", "AV1:", "AV2:", "AV3:"]
         self.campos = []
         for i, label in enumerate(labels):
             tk.Label(self.janela_form, text=label, bg='gray', fg='white', anchor='w').place(x=10, y=50 + i * 40, width=100, height=25)
-            campo = tk.Entry(self.janela_form, bg='lightgrey', fg='black')
-            campo.place(x=120, y=50 + i * 40, width=100, height=25)
+            campo = tk.Entry(self.janela_form, bg='lightgrey', fg='black').place(x=120, y=50 + i * 40, width=100, height=25)
             self.campos.append(campo)
 
 
