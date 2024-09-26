@@ -345,7 +345,7 @@ class InformacoesAluno:
 
             if resultado_fet:
                 self.campos[0].config(text=resultado_fet[0])  # Nome
-                self.campos[1].config(text=resultado_fet[2])  # Turma
+                self.campos[1].config(text=resultado_fet[1])  # Turma
                 self.campos[2].config(text=resultado_fet[2])  # Matéria
                 self.campos[3].config(text=resultado_fet[3])  # AV1
                 self.campos[4].config(text=resultado_fet[4])  # AV2
