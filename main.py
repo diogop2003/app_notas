@@ -243,7 +243,7 @@ class JanelaPrincipal:
         self.tv.column('av3', minwidth=0, width=50, anchor='center')
         self.tv.column('media', minwidth=0, width=50, anchor='center')
         self.tv.heading('id', text='ID', anchor='center')
-        self.tv.heading('turma', text='ID', anchor='center')
+        self.tv.heading('turma', text='TURMA', anchor='center')
         self.tv.heading('nome', text='NOME', anchor='center')
         self.tv.heading('materia', text='MATERIA', anchor='center')
         self.tv.heading('av1', text='AV1', anchor='center')
@@ -589,7 +589,6 @@ class FormularioEditar:
 
         self.dados_anteriores()
 
-
     def dados_anteriores(self):
         try:
             conexao = sqlite3.connect('meu_banco.db')
@@ -612,7 +611,6 @@ class FormularioEditar:
         finally:
             if conexao:
                 conexao.close()
-
 
     def button_editar_acao(self):
         try:
@@ -724,7 +722,8 @@ class EstatisticasTurmas:
                                 bg='gray', fg='white', font=('Arial', 16, 'bold'))
         texto_titulo.pack(pady=10)
 
-        self.frame = tk.Frame(self.janela_form, bg='light gray', padx=10, pady=15)
+        self.frame = tk.Frame(
+            self.janela_form, bg='light gray', padx=10, pady=15)
         self.frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
         info_label = tk.Label(self.frame, text=f'Estas são as médias das notas da turma {self.turma}, com base em suas respectivas disciplinas.',
@@ -736,12 +735,12 @@ class EstatisticasTurmas:
 
         # Botão para exportar as notas
         exportar_botao = tk.Button(self.frame, text='Exportar Notas', command=self.button_exportar_acao,
-                                    bg='gray', fg='white', font=('Arial', 10, 'bold'))
-        exportar_botao.pack(pady=(10, 10))  
+                                   bg='gray', fg='white', font=('Arial', 10, 'bold'))
+        exportar_botao.pack(pady=(10, 10))
         exportar_botao.place(relx=0.5, rely=1.03, anchor='s')
 
     def plot(self):
-    #Cria um gráfico de barras para visualizar as médias das notas das disciplinas
+        # Cria um gráfico de barras para visualizar as médias das notas das disciplinas
 
         import matplotlib.pyplot as plt
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as fc
@@ -764,7 +763,8 @@ class EstatisticasTurmas:
             'Biologia': '#F4B6D7'
         }
 
-        cores_plot = [cores.get(disciplina, 'blue') for disciplina in disciplinas]
+        cores_plot = [cores.get(disciplina, 'blue')
+                      for disciplina in disciplinas]
 
         # Plotagem
         fig = plt.figure(figsize=(6, 3))
@@ -799,7 +799,7 @@ class EstatisticasTurmas:
             medias[materia] = media_total
 
         return medias
-    
+
     def button_exportar_acao(self):
         '''
         Essa função gera o csv da turma selecionada
@@ -808,7 +808,8 @@ class EstatisticasTurmas:
         try:
             conexao = sqlite3.connect('meu_banco.db')
             cursor = conexao.cursor()
-            dados = cursor.execute("SELECT * FROM notas WHERE turma = ?", (self.turma,)).fetchall()
+            dados = cursor.execute(
+                "SELECT * FROM notas WHERE turma = ?", (self.turma,)).fetchall()
             if not dados:
                 messagebox.showinfo(
                     title='ERRO', message='Nenhum dado disponível para exportação')
@@ -816,7 +817,7 @@ class EstatisticasTurmas:
 
             colunas = [descricao[0] for descricao in cursor.description]
             df = DataFrame(dados, columns=colunas)
-            df.to_csv(f'notas_turma_{self.turma}.csv', index=False)  
+            df.to_csv(f'notas_turma_{self.turma}.csv', index=False)
             messagebox.showinfo(title='Concluído',
                                 message='Exportação feita com sucesso')
             conexao.commit()
