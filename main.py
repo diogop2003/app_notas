@@ -280,7 +280,7 @@ class JanelaPrincipal:
                                          bg='lightgrey', fg='black', width=15, height=2).place(x=10, y=205, width=80, height=30)
 
         self.button_estatisticas = tk.Button(self.janela, text='ESTATISTICAS', command=self.button_estatistica_acao,
-                                             bg='lightgrey', fg='black', width=15, height=2).place(x=10, y=205, width=80, height=30)
+                                             bg='lightgrey', fg='black', width=15, height=2).place(x=10, y=240, width=80, height=30)
 
         self.tv.bind('<Double-1>', self.double_click)
 
