@@ -298,7 +298,7 @@ class InformacoesAluno:
         '''
 
         self.janela_form = tk.Toplevel()
-        self.janela_form.title("EDITAR ALUNO")
+        self.janela_form.title("Informações do aluno")
         self.janela_form.geometry("500x400")
         self.janela_form.config(bg='gray')
         self.janela_form.resizable(False, False)
@@ -312,8 +312,6 @@ class InformacoesAluno:
         self.button_exportar = tk.Button(self.janela_form, text='EXPORTAR', command=self.button_exportar_acao,
                                          bg='lightgrey', fg='black', width=15, height=2).place(x=30, y=300, width=80, height=30)
 
-        #button_salvar = tk.Button(self.janela_form, text="Salvar", bg='gray', fg='white', command=self.button_editar_acao)
-        #button_salvar.place(x=75, y=250, width=100, height=30)
 
     def criar_campos(self):
         '''
@@ -672,7 +670,7 @@ class Estatisticas:
             return
 
         self.janela_form = tk.Toplevel()
-        self.janela_form.title("EDITAR ALUNO")
+        self.janela_form.title("Turma")
         self.janela_form.geometry("250x250")
         self.janela_form.config(bg='gray')
         self.janela_form.resizable(False, False)
