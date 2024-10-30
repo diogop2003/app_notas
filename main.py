@@ -73,6 +73,35 @@ class JanelaPrincipal:
         formulario = FormularioAluno(self.janela, self.button_atualizar_acao)
         formulario.criar_formulario()
 
+    def button_pesquisar_acao(self):
+        '''
+        Essa função é a ação do botão "PESQUISAR", que mostra na TreevView o aluno de acordo 
+        com o nome escrito no campo de entrada embaixo do botão
+
+        '''
+
+        conexao = sqlite3.connect('meu_banco.db')
+        cursor = conexao.cursor()
+
+        termo_pesquisa = self.texto_pesquisa.get("1.0", tk.END).strip()
+
+        cursor.execute('SELECT * FROM notas WHERE nome LIKE ?',
+                       ('%' + termo_pesquisa + '%',))
+        resultado = cursor.fetchall()
+
+        # Limpar a Treeview
+        for item in self.tv.get_children():
+            self.tv.delete(item)
+
+        # Inserir dados Treeview
+        for item in resultado:
+            id_nota, turma, nome, materia, av1, av2, av3, media = item
+            self.tv.insert('', tk.END, values=(
+                id_nota, turma, nome, materia, av1, av2, av3, media))
+
+        conexao.close()
+
+
     def button_remover_acao(self):
         '''
         Essa função é a ação do botão "REMOVER", que exclui o aluno selecionado
